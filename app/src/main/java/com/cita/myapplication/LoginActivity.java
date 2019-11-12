@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
@@ -78,11 +79,9 @@ public class LoginActivity extends AppCompatActivity {
         //Cek session login jika bernilai true maka lanjut ke UserMainActivity
         sharedPreferences = getSharedPreferences(MY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         boolean session = sharedPreferences.getBoolean(SESSION_STATUS, false);
-        int userId = sharedPreferences.getInt(TAG_USER_ID, 0);
 
         if (session) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.putExtra(TAG_USER_ID, userId);
             finish();
             startActivity(intent);
 
@@ -112,7 +111,9 @@ public class LoginActivity extends AppCompatActivity {
                 String password = tietPassword.getText().toString();
 
                 if (emailAddress.trim().length() > 0 && password.trim().length() > 0) {
-                    checkLogin(emailAddress, password);
+                    if (isEmailValid(emailAddress, tilEmailAddress)) {
+                        checkLogin(emailAddress, password);
+                    }
                 }
             }
         });
@@ -193,13 +194,12 @@ public class LoginActivity extends AppCompatActivity {
                                         Toast.LENGTH_LONG).show();
 
                                 // Menyimpan login ke session
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putInt(TAG_USER_ID, userId);
                                 if (cbRememberMe.isChecked()) {
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
                                     editor.putBoolean(SESSION_STATUS, true);
-                                    editor.putInt(TAG_USER_ID, userId);
-                                    editor.apply();
                                 }
-
+                                editor.apply();
 
                                 // Memanggil UserMainActivity
                                 Intent intent = new Intent(LoginActivity.this,
@@ -255,4 +255,14 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    private boolean isEmailValid(@NonNull String emailAddress, TextInputLayout textInputLayout) {
+        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+        if (emailAddress.matches(emailPattern)) {
+            textInputLayout.setError(null);
+            return true;
+        } else {
+            textInputLayout.setError("Alamat email tidak valid");
+            return false;
+        }
+    }
 }
