@@ -129,7 +129,7 @@
                 android:drawableStart="@drawable/ic_lock_black_24dp"
                 android:drawableEnd="@drawable/ic_edit_black_24dp"
                 android:drawablePadding="10dp"
-                android:text="@string/txt_password"
+                android:text="@string/txt_password_with_asterisk"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
