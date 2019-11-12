@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">Cita App</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Pengaturan</string>
+    <string name="action_logout">Keluar</string>
+
+    <string name="menu_home">Beranda</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+    <string name="menu_profile">Profil</string>
+    <string name="menu_child">Data Anak</string>
+    <string name="menu_create_child">Tambah Data Anak</string>
+    <string name="menu_nutrient">Data Kandungan Gizi</string>
+    <string name="menu_create_nutrient">Tambah Data Kandungan Gizi</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="txt_email">Alamat Email</string>
+    <string name="txt_password">Kata Sandi</string>
+    <string name="txt_next">lanjut</string>
+    <string name="txt_cancel">batal</string>
+    <string name="txt_dont_have_account_with_question_mark">Belum punya akun?&#160;</string>
+    <string name="txt_register_now">Daftar Sekarang!</string>
+    <string name="txt_forgot_password_with_question_mark">Lupa kata sandi?&#160;</string>
+    <string name="txt_reset_password">Atur Ulang Kata Sandi</string>
+    <string name="txt_remember_me">Ingat saya</string>
+    <string name="txt_child_name_with_asterisk">Nama Anak*</string>
+    <string name="txt_date_of_birth_with_asterisk">Tanggal Lahir*</string>
+    <string name="txt_child_gender_with_asterisk">Jenis Kelamin*</string>
+    <string name="txt_full_name">Nama Lengkap</string>
+    <string name="txt_email_address">Alamat Email</string>
+</resources>
