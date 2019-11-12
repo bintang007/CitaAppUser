@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
@@ -150,39 +151,42 @@ public class ProfileFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         final String emailAddress = input.getText().toString();
-                        StringRequest stringRequest1 = new StringRequest(Request.Method.POST,
-                                Server.URL + "user/update_profile_email_address.php",
-                                new Response.Listener<String>() {
-                                    @Override
-                                    public void onResponse(String response) {
-                                        Log.e(TAG, response);
-                                        try {
-                                            JSONObject jsonObject = new JSONObject(response);
-                                            Toast.makeText(getActivity(),
-                                                    jsonObject.getString(LoginActivity.TAG_MESSAGE),
-                                                    Toast.LENGTH_SHORT).show();
-                                            showProfile();
+                        if (isEmailValid(emailAddress)) {
+                            StringRequest stringRequest1 = new StringRequest(Request.Method.POST,
+                                    Server.URL + "user/update_profile_email_address.php",
+                                    new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+                                            Log.e(TAG, response);
+                                            try {
+                                                JSONObject jsonObject = new JSONObject(response);
+                                                Toast.makeText(getActivity(),
+                                                        jsonObject.getString(LoginActivity.TAG_MESSAGE),
+                                                        Toast.LENGTH_SHORT).show();
+                                                showProfile();
 
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
                                         }
-                                    }
-                                },
-                                new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                }) {
-                            @Override
-                            protected Map<String, String> getParams() {
-                                Map<String, String> params = new HashMap<>();
-                                params.put(TAG_EMAIL_ADDRESS, emailAddress);
-                                params.put(LoginActivity.TAG_USER_ID, String.valueOf(userId));
-                                return params;
-                            }
-                        };
-                        AppController.getInstance().addToRequestQueue(stringRequest1, TAG_JSON_OBJ, getActivity());
+                                    },
+                                    new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }) {
+                                @Override
+                                protected Map<String, String> getParams() {
+                                    Map<String, String> params = new HashMap<>();
+                                    params.put(TAG_EMAIL_ADDRESS, emailAddress);
+                                    params.put(LoginActivity.TAG_USER_ID, String.valueOf(userId));
+                                    return params;
+                                }
+                            };
+                            AppController.getInstance().addToRequestQueue(stringRequest1, TAG_JSON_OBJ, getActivity());
+                        }
+
                     }
                 });
                 alert.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
@@ -293,5 +297,15 @@ public class ProfileFragment extends Fragment {
         };
         AppController.getInstance().addToRequestQueue(stringRequest, TAG_JSON_OBJ, getActivity());
 
+    }
+
+    private boolean isEmailValid(@NonNull String emailAddress) {
+        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+        if (emailAddress.matches(emailPattern)) {
+            return true;
+        } else {
+            Toast.makeText(getActivity(), "Alamat email tidak valid", Toast.LENGTH_SHORT).show();
+            return false;
+        }
     }
 }
