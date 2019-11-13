@@ -102,7 +102,6 @@ public class ChildFragment extends Fragment {
                                 JSONArray jsonArrayDateOfBirth = jsonObject.getJSONArray(TAG_DATE_OF_BIRTH);
                                 for (int i = 0; i < jsonArrayChildName.length(); i++) {
                                     Child child = new Child();
-                                    Log.e(TAG, jsonArrayChildName.getString(i));
                                     child.setChildId(jsonArrayChildId.getInt(i));
                                     child.setChildName(jsonArrayChildName.getString(i));
                                     child.setGender(jsonArrayGender.getString(i));
