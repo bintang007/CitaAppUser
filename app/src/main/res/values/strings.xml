@@ -28,6 +28,8 @@
     <string name="txt_full_name_with_asteriks">Nama Lengkap*</string>
     <string name="txt_next">lanjut</string>
     <string name="txt_cancel">batal</string>
+    <string name="txt_delete">hapus</string>
+    <string name="txt_back">kembali</string>
     <string name="txt_dont_have_account_with_question_mark">Belum punya akun?&#160;</string>
     <string name="txt_have_account_with_question_mark">Sudah punya akun?&#160;</string>
     <string name="txt_register_now">Daftar Sekarang!</string>
@@ -40,4 +42,11 @@
     <string name="txt_child_gender_with_asterisk">Jenis Kelamin*</string>
     <string name="txt_full_name">Nama Lengkap</string>
     <string name="txt_email_address">Alamat Email</string>
+    <string name="txt_full_name_with_colon">Nama Lengkap:&#160;</string>
+    <string name="txt_child_name_with_colon">Nama Anak:&#160;</string>
+    <string name="txt_child_name">Nama Anak</string>
+    <string name="txt_gender_with_colon">Jenis Kelamin:&#160;</string>
+    <string name="txt_gender">Jenis Kelamin</string>
+    <string name="txt_date_of_birth_with_colon">Tanggal Lahir:&#160;</string>
+    <string name="txt_date_of_birth">Tanggal Lahir</string>
 </resources>

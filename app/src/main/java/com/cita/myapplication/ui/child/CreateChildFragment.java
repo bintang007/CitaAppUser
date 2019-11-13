@@ -47,13 +47,13 @@ public class CreateChildFragment extends Fragment {
 
     private ProgressDialog progressDialog;
 
-    private TextInputLayout tilFullName, tilGender, tilDateOfBirth;
-    private TextInputEditText tietFullName, tietDateOfBirth;
+    private TextInputLayout tilChildName, tilGender, tilDateOfBirth;
+    private TextInputEditText tietChildName, tietDateOfBirth;
     private AutoCompleteTextView dropdownGender;
 
     private final static String URL = Server.URL + "user/store_child.php", TAG = CreateChildFragment
             .class.getSimpleName(), TAG_MESSAGE = "message", TAG_JSON_OBJ = "json_obj_req",
-            TAG_USER_ID = "user_id", TAG_FULL_NAME = "full_name", TAG_GENDER = "gender",
+            TAG_USER_ID = "user_id", TAG_CHILD_NAME = "child_name", TAG_GENDER = "gender",
             TAG_DATE_OF_BIRTH = "date_of_birth";
 
     private static int userId;
@@ -72,10 +72,10 @@ public class CreateChildFragment extends Fragment {
         assert getArguments() != null;
         userId = CreateChildFragmentArgs.fromBundle(getArguments()).getUserId();
 
-        tilFullName = root.findViewById(R.id.til_full_name);
+        tilChildName = root.findViewById(R.id.til_child_name);
         tilGender = root.findViewById(R.id.til_gender);
         tilDateOfBirth = root.findViewById(R.id.til_date_of_birth);
-        tietFullName = root.findViewById(R.id.tiet_full_name);
+        tietChildName = root.findViewById(R.id.tiet_child_name);
         tietDateOfBirth = root.findViewById(R.id.tiet_date_of_birth);
 
         tietDateOfBirth.setKeyListener(null);
@@ -130,10 +130,10 @@ public class CreateChildFragment extends Fragment {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Objects.requireNonNull(tietFullName.getText()).toString().isEmpty()) {
-                    tilFullName.setError("Kolom tidak boleh kosong");
+                if (Objects.requireNonNull(tietChildName.getText()).toString().isEmpty()) {
+                    tilChildName.setError("Kolom tidak boleh kosong");
                 } else {
-                    tilFullName.setError(null);
+                    tilChildName.setError(null);
                 }
                 if (Objects.requireNonNull(dropdownGender.getText()).toString().isEmpty()) {
                     tilGender.setError("Kolom tidak boleh kosong");
@@ -146,11 +146,11 @@ public class CreateChildFragment extends Fragment {
                     tilDateOfBirth.setError(null);
                 }
 
-                textChangedListener(tietFullName, tilFullName);
+                textChangedListener(tietChildName, tilChildName);
 //                textChangedListener(dropdownGender, tilGender);
                 textChangedListener(tietDateOfBirth, tilDateOfBirth);
 
-                String fullName = tietFullName.getText().toString();
+                String fullName = tietChildName.getText().toString();
                 String gender = dropdownGender.getText().toString();
                 String dateOfBirth = tietDateOfBirth.getText().toString();
 
@@ -172,7 +172,7 @@ public class CreateChildFragment extends Fragment {
         textInputEditText.setText(sdf.format(calendar.getTime()));
     }
 
-    private void store(final String fullName, final String gender, final String dateOfBirth) {
+    private void store(final String childName, final String gender, final String dateOfBirth) {
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Memproses ...");
@@ -207,7 +207,7 @@ public class CreateChildFragment extends Fragment {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 params.put(TAG_USER_ID, String.valueOf(userId));
-                params.put(TAG_FULL_NAME, fullName);
+                params.put(TAG_CHILD_NAME, childName);
                 params.put(TAG_GENDER, gender);
                 params.put(TAG_DATE_OF_BIRTH, dateOfBirth);
                 return params;
