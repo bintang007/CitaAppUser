@@ -59,6 +59,7 @@ public class ShowChildFragment extends Fragment {
     private static final String TAG = ShowChildFragment.class.getSimpleName();
     private static final String URL = Server.URL + "user/show_child.php";
     private static final String TAG_CHILD_ID = "child_id";
+    private static final String TAG_MESSAGE = "message";
 
     //    private AutoCompleteTextView dropdownGender;
     private int chilId;
@@ -101,7 +102,7 @@ public class ShowChildFragment extends Fragment {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                destroyChild(chilId);
+                destroyChild();
             }
         });
 
@@ -344,7 +345,52 @@ public class ShowChildFragment extends Fragment {
 
     }
 
-    private void destroyChild(int childId) {
+    private void destroyChild() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
+        builder.setMessage("Apakah anda yakin?");
+        builder.setPositiveButton("Hapus", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                StringRequest stringRequest = new StringRequest(Request.Method.POST,
+                        Server.URL + "user/destroy_child.php",
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                Log.e(TAG, "Destroy response: " + response);
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    Toast.makeText(getActivity(), jsonObject.getString(TAG_MESSAGE), Toast.LENGTH_SHORT).show();
+                                    Objects.requireNonNull(getActivity()).onBackPressed();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }) {
+                    @Override
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put(TAG_CHILD_ID, String.valueOf(chilId));
+                        return params;
+                    }
+                };
+                AppController.getInstance().addToRequestQueue(stringRequest, TAG_JSON_OBJ, getActivity());
+            }
+        });
+        builder.setNegativeButton("batal", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        builder.show();
+
 
     }
 }
