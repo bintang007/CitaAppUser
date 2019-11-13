@@ -2,6 +2,7 @@ package com.cita.myapplication.ui.child;
 
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
@@ -118,6 +120,11 @@ public class ShowChildFragment extends Fragment {
                 params.rightMargin = getResources().getDimensionPixelOffset(R.dimen.activity_horizontal_margin);
                 input.setSingleLine();
                 input.setLayoutParams(params);
+                input.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                assert imm != null;
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                input.setText(tvChildName.getText().toString());
                 container.addView(input);
                 alert.setTitle("Nama Anak");
                 alert.setView(container);
@@ -126,45 +133,55 @@ public class ShowChildFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         final String childName = input.getText().toString();
-                        StringRequest stringRequest = new StringRequest(Request.Method.POST,
-                                Server.URL + "user/update_child_child_name.php",
-                                new Response.Listener<String>() {
-                                    @Override
-                                    public void onResponse(String response) {
-                                        Log.e(TAG, "Update response: " + response);
-                                        try {
-                                            JSONObject jsonObject = new JSONObject(response);
-                                            Toast.makeText(getActivity(),
-                                                    jsonObject.getString(LoginActivity.TAG_MESSAGE),
-                                                    Toast.LENGTH_SHORT).show();
-                                            showChild();
+                        if (!childName.equals(tvChildName.getText().toString())) {
+                            StringRequest stringRequest = new StringRequest(Request.Method.POST,
+                                    Server.URL + "user/update_child_child_name.php",
+                                    new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+                                            Log.e(TAG, "Update response: " + response);
+                                            try {
+                                                JSONObject jsonObject = new JSONObject(response);
+                                                Toast.makeText(getActivity(),
+                                                        jsonObject.getString(LoginActivity.TAG_MESSAGE),
+                                                        Toast.LENGTH_SHORT).show();
+                                                showChild();
 
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
                                         }
-                                    }
-                                },
-                                new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                }) {
-                            @Override
-                            protected Map<String, String> getParams() {
-                                Map<String, String> params = new HashMap<>();
-                                params.put(TAG_CHILD_NAME, childName);
-                                params.put(TAG_CHILD_ID, String.valueOf(chilId));
-                                return params;
-                            }
-                        };
-                        AppController.getInstance().addToRequestQueue(stringRequest, TAG_JSON_OBJ, getActivity());
+                                    },
+                                    new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }) {
+                                @Override
+                                protected Map<String, String> getParams() {
+                                    Map<String, String> params = new HashMap<>();
+                                    params.put(TAG_CHILD_NAME, childName);
+                                    params.put(TAG_CHILD_ID, String.valueOf(chilId));
+                                    return params;
+                                }
+                            };
+                            AppController.getInstance().addToRequestQueue(stringRequest, TAG_JSON_OBJ, getActivity());
+                        }
+
                     }
                 });
                 alert.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        assert imm != null;
+                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                        View view = getActivity().getCurrentFocus();
+                        if (view == null) {
+                            view = new View(getActivity());
+                        }
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
                 });
                 alert.show();
