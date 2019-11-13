@@ -180,7 +180,7 @@ public class ShowChildFragment extends Fragment {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                new DatePickerDialog(Objects.requireNonNull(getActivity()), new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(Objects.requireNonNull(getActivity()), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear,
                                           int dayOfMonth) {
@@ -224,7 +224,10 @@ public class ShowChildFragment extends Fragment {
                     }
 
                 }, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                        myCalendar.get(Calendar.DAY_OF_MONTH));
+                DatePicker datePicker = datePickerDialog.getDatePicker();
+                datePicker.setMaxDate(System.currentTimeMillis());
+                datePickerDialog.show();
 
 
             }

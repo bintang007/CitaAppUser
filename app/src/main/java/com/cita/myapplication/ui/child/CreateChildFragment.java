@@ -3,6 +3,7 @@ package com.cita.myapplication.ui.child;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -113,6 +114,7 @@ public class CreateChildFragment extends Fragment {
                                 .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                                 myCalendar.get(Calendar.DAY_OF_MONTH));
                 datePickerDialog.getDatePicker().getTouchables().get(0).performClick();
+                datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
                 datePickerDialog.show();
             }
         });
