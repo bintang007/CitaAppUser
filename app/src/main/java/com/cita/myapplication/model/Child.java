@@ -5,6 +5,15 @@ import android.os.Parcelable;
 
 public class Child implements Parcelable {
     private String childName, dateOfBirth, gender;
+    private int childId;
+
+    public int getChildId() {
+        return childId;
+    }
+
+    public void setChildId(int childId) {
+        this.childId = childId;
+    }
 
     public String getChildName() {
         return childName;
@@ -31,6 +40,9 @@ public class Child implements Parcelable {
     }
 
 
+    public Child() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -41,18 +53,17 @@ public class Child implements Parcelable {
         dest.writeString(this.childName);
         dest.writeString(this.dateOfBirth);
         dest.writeString(this.gender);
-    }
-
-    public Child() {
+        dest.writeInt(this.childId);
     }
 
     protected Child(Parcel in) {
         this.childName = in.readString();
         this.dateOfBirth = in.readString();
         this.gender = in.readString();
+        this.childId = in.readInt();
     }
 
-    public static final Parcelable.Creator<Child> CREATOR = new Parcelable.Creator<Child>() {
+    public static final Creator<Child> CREATOR = new Creator<Child>() {
         @Override
         public Child createFromParcel(Parcel source) {
             return new Child(source);

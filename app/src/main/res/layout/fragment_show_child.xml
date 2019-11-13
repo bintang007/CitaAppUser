@@ -32,7 +32,7 @@
                 android:id="@+id/tv_txt_child_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_person_black_24dp"
+                android:drawableStart="@drawable/ic_menu_child"
                 android:drawableEnd="@drawable/ic_edit_black_24dp"
                 android:drawablePadding="10dp"
                 android:text="@string/txt_child_name"
@@ -41,7 +41,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tv_full_name"
+                android:id="@+id/tv_child_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="33dp"
@@ -76,7 +76,7 @@
                 android:id="@+id/tv_txt_gender"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_email_black_24dp"
+                android:drawableStart="@drawable/ic_gender_24dp"
                 android:drawableEnd="@drawable/ic_edit_black_24dp"
                 android:drawablePadding="10dp"
                 android:text="@string/txt_gender"
@@ -120,7 +120,7 @@
                 android:id="@+id/tv_txt_date_of_birth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_lock_black_24dp"
+                android:drawableStart="@drawable/ic_date_range_black_24dp"
                 android:drawableEnd="@drawable/ic_edit_black_24dp"
                 android:drawablePadding="10dp"
                 android:text="@string/txt_date_of_birth"
@@ -129,7 +129,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tv_password"
+                android:id="@+id/tv_date_of_birth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="33dp"
@@ -146,9 +146,9 @@
         android:id="@+id/rl_action"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
         app:layout_constraintTop_toBottomOf="@id/mcv_date_of_birth">
 
         <com.google.android.material.button.MaterialButton

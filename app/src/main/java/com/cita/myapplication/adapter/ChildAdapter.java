@@ -1,11 +1,13 @@
 package com.cita.myapplication.adapter;
 
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cita.myapplication.model.Child;
@@ -13,10 +15,11 @@ import com.cita.myapplication.model.Child;
 import java.util.ArrayList;
 
 import com.cita.myapplication.R;
+import com.cita.myapplication.ui.child.ChildFragmentDirections;
 
 public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHolder> {
     private ArrayList<Child> childArrayList;
-
+    private SharedPreferences sharedPreferences;
     public ChildAdapter(ArrayList<Child> childArrayList) {
         this.childArrayList = childArrayList;
     }
@@ -29,14 +32,17 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHol
     }
 
     @Override
-    public void onBindViewHolder(final ChildViewHolder holder, int position) {
+    public void onBindViewHolder(final ChildViewHolder holder, final int position) {
         holder.tvChildName.setText(childArrayList.get(position).getChildName());
         holder.tvDateOfBirth.setText(childArrayList.get(position).getDateOfBirth());
         holder.tvGender.setText(childArrayList.get(position).getGender());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                ChildFragmentDirections.ActionNavChildToNavShowChild actionNavChildToNavShowChild =
+                        ChildFragmentDirections.actionNavChildToNavShowChild();
+                actionNavChildToNavShowChild.setChildId(childArrayList.get(position).getChildId());
+                Navigation.findNavController(view).navigate(actionNavChildToNavShowChild);
                 Toast.makeText(holder.itemView.getContext(), holder.tvChildName.getText().toString(), Toast.LENGTH_SHORT).show();
             }
         });

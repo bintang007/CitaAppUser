@@ -42,11 +42,11 @@ public class ChildFragment extends Fragment {
     private final static String TAG_USER_ID = "user_id", TAG = ChildFragment.class.getSimpleName();
     private static final String URL = Server.URL + "user/read_child.php", TAG_SUCCESS = "success",
             TAG_CHILD_NAME = "child_name", TAG_DATE_OF_BIRTH = "date_of_birth", TAG_GENDER = "gender",
-            TAG_MESSAGE = "message",TAG_JSON_OBJ = "json_obj_req";
+            TAG_MESSAGE = "message", TAG_JSON_OBJ = "json_obj_req", TAG_CHILD_ID = "child_id";
     private ArrayList<Child> childArrayList;
     private int userId;
     private TextView tvEmptyChild;
-    private  ChildAdapter childAdapter;
+    private ChildAdapter childAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,15 +74,10 @@ public class ChildFragment extends Fragment {
         fabCreateChild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sharedPreferences = Objects.requireNonNull(getActivity())
-                        .getSharedPreferences(LoginActivity.MY_SHARED_PREFERENCES,
-                                Context.MODE_PRIVATE);
-                int userId = sharedPreferences.getInt(TAG_USER_ID, 0);
                 ChildFragmentDirections.ActionNavChildToNavCreateChild actionNavChildToNavCreateChild =
                         ChildFragmentDirections.actionNavChildToNavCreateChild();
                 actionNavChildToNavCreateChild.setUserId(userId);
                 Navigation.findNavController(view).navigate(actionNavChildToNavCreateChild);
-
             }
         });
         return root;
@@ -101,12 +96,14 @@ public class ChildFragment extends Fragment {
                             JSONObject jsonObject = new JSONObject(response);
                             int success = jsonObject.getInt(TAG_SUCCESS);
                             if (success == 1) {
+                                JSONArray jsonArrayChildId = jsonObject.getJSONArray(TAG_CHILD_ID);
                                 JSONArray jsonArrayChildName = jsonObject.getJSONArray(TAG_CHILD_NAME);
                                 JSONArray jsonArrayGender = jsonObject.getJSONArray(TAG_GENDER);
                                 JSONArray jsonArrayDateOfBirth = jsonObject.getJSONArray(TAG_DATE_OF_BIRTH);
                                 for (int i = 0; i < jsonArrayChildName.length(); i++) {
                                     Child child = new Child();
                                     Log.e(TAG, jsonArrayChildName.getString(i));
+                                    child.setChildId(jsonArrayChildId.getInt(i));
                                     child.setChildName(jsonArrayChildName.getString(i));
                                     child.setGender(jsonArrayGender.getString(i));
                                     child.setDateOfBirth(jsonArrayDateOfBirth.getString(i));

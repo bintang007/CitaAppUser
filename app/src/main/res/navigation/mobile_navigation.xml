@@ -64,6 +64,9 @@
         <action
             android:id="@+id/action_nav_child_to_nav_create_child"
             app:destination="@id/nav_create_child" />
+        <action
+            android:id="@+id/action_nav_child_to_nav_show_child"
+            app:destination="@id/nav_show_child" />
     </fragment>
 
     <fragment
@@ -83,5 +86,15 @@
             app:argType="integer" />
     </fragment>
 
-    
+    <fragment
+        android:id="@+id/nav_show_child"
+        android:name="com.cita.myapplication.ui.child.ShowChildFragment"
+        android:label="@string/menu_show_child"
+        tools:layout="@layout/fragment_show_child" >
+        <argument
+            android:name="childId"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+
 </navigation>
