@@ -1,6 +1,7 @@
 package com.cita.myapplication.ui.child;
 
 
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
@@ -36,7 +38,11 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -166,23 +172,22 @@ public class ShowChildFragment extends Fragment {
         mcvDateOfBirth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final AlertDialog.Builder alert = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
-                final EditText input = new EditText(getActivity());
-                FrameLayout container = new FrameLayout(getActivity());
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.
-                        LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.leftMargin = getResources().getDimensionPixelOffset(R.dimen.activity_horizontal_margin);
-                params.rightMargin = getResources().getDimensionPixelOffset(R.dimen.activity_horizontal_margin);
-                input.setSingleLine();
-                input.setLayoutParams(params);
-                container.addView(input);
-                alert.setTitle("Tanggal Lahir");
-                alert.setView(container);
-
-                alert.setPositiveButton("Ubah", new DialogInterface.OnClickListener() {
+                final Calendar myCalendar = Calendar.getInstance();
+                String myFormat = "dd/MM/yyyy";
+                final SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
+                try {
+                    myCalendar.setTime(Objects.requireNonNull(sdf.parse(tvDateOfBirth.getText().toString())));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                new DatePickerDialog(Objects.requireNonNull(getActivity()), new DatePickerDialog.OnDateSetListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        final String dateOfBirth = input.getText().toString();
+                    public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                          int dayOfMonth) {
+                        myCalendar.set(Calendar.YEAR, year);
+                        myCalendar.set(Calendar.MONTH, monthOfYear);
+                        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                        final String dateOfBirth = sdf.format(myCalendar.getTime());
                         StringRequest stringRequest1 = new StringRequest(Request.Method.POST,
                                 Server.URL + "user/update_child_date_of_birth.php",
                                 new Response.Listener<String>() {
@@ -218,14 +223,10 @@ public class ShowChildFragment extends Fragment {
                         AppController.getInstance().addToRequestQueue(stringRequest1, TAG_JSON_OBJ, getActivity());
                     }
 
-                });
-                alert.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                }, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
 
-                    }
-                });
-                alert.show();
+
             }
         });
         mcvGender.setOnClickListener(new View.OnClickListener() {
