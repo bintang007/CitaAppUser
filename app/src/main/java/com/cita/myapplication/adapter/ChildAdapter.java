@@ -43,7 +43,6 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHol
                         ChildFragmentDirections.actionNavChildToNavShowChild();
                 actionNavChildToNavShowChild.setChildId(childArrayList.get(position).getChildId());
                 Navigation.findNavController(view).navigate(actionNavChildToNavShowChild);
-                Toast.makeText(holder.itemView.getContext(), holder.tvChildName.getText().toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }
