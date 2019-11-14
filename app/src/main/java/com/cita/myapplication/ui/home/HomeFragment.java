@@ -23,17 +23,6 @@ public class HomeFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         final TextView textView = root.findViewById(R.id.text_home);
 
-        final EditText editTextUsername = root.findViewById(R.id.et_username);
-        Button buttonNext = root.findViewById(R.id.btn_next);
-        buttonNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String username = editTextUsername.getText().toString();
-                HomeFragmentDirections.ActionNavHomeToNavGallery3 actionNavHomeToNavGallery3 =
-                        HomeFragmentDirections.actionNavHomeToNavGallery3(username);
-                Navigation.findNavController(view).navigate(actionNavHomeToNavGallery3);
-            }
-        });
         return root;
     }
 }
