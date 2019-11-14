@@ -50,4 +50,9 @@
     <string name="txt_gender">Jenis Kelamin</string>
     <string name="txt_date_of_birth_with_colon">Tanggal Lahir:&#160;</string>
     <string name="txt_date_of_birth">Tanggal Lahir</string>
+    <string name="txt_nutrient_name_with_colon">Nama Kandungan Gizi:&#160;</string>
+    <string name="txt_calories_with_colon">Kalori:&#160;</string>
+    <string name="txt_fat_with_colon">Lemak:&#160;</string>
+    <string name="txt_protein_with_colon">Protein:&#160;</string>
+    <string name="txt_carbohydrate_with_colon">Karbohidrat:&#160;</string>
 </resources>
