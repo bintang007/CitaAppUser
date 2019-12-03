@@ -9,52 +9,20 @@
         android:id="@+id/nav_home"
         android:name="com.cita.myapplication.ui.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home">
-        <action
-            android:id="@+id/action_nav_home_to_nav_gallery3"
-            app:destination="@id/nav_gallery" />
-    </fragment>
+        tools:layout="@layout/fragment_home" />
 
-    <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.cita.myapplication.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery">
-        <argument
-            android:name="username"
-            app:argType="string"
-            app:nullable="true" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.cita.myapplication.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
-
-    <fragment
-        android:id="@+id/nav_tools"
-        android:name="com.cita.myapplication.ui.tools.ToolsFragment"
-        android:label="@string/menu_tools"
-        tools:layout="@layout/fragment_tools" />
-
-    <fragment
-        android:id="@+id/nav_share"
-        android:name="com.cita.myapplication.ui.share.ShareFragment"
-        android:label="@string/menu_share"
-        tools:layout="@layout/fragment_share" />
-
-    <fragment
-        android:id="@+id/nav_send"
-        android:name="com.cita.myapplication.ui.send.SendFragment"
-        android:label="@string/menu_send"
-        tools:layout="@layout/fragment_send" />
 
     <fragment
         android:id="@+id/nav_profile"
         android:name="com.cita.myapplication.ui.profile.ProfileFragment"
         android:label="@string/menu_profile"
         tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/nav_nutrient"
+        android:name="com.cita.myapplication.ui.nutrient.NutrientFragment"
+        android:label="@string/menu_nutrient"
+        tools:layout="@layout/fragment_nutrient" />
 
     <fragment
         android:id="@+id/nav_child"
@@ -68,12 +36,6 @@
             android:id="@+id/action_nav_child_to_nav_show_child"
             app:destination="@id/nav_show_child" />
     </fragment>
-
-    <fragment
-        android:id="@+id/nav_nutrient"
-        android:name="com.cita.myapplication.ui.nutrient.NutrientFragment"
-        android:label="@string/menu_nutrient"
-        tools:layout="@layout/fragment_nutrient" />
 
     <fragment
         android:id="@+id/nav_create_child"
@@ -90,11 +52,62 @@
         android:id="@+id/nav_show_child"
         android:name="com.cita.myapplication.ui.child.ShowChildFragment"
         android:label="@string/menu_show_child"
-        tools:layout="@layout/fragment_show_child" >
+        tools:layout="@layout/fragment_show_child">
         <argument
             android:name="childId"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
+
+    <fragment
+        android:id="@+id/nav_diagnoses"
+        android:name="com.cita.myapplication.ui.diagnoses.DiagnosesFragment"
+        android:label="@string/menu_diagnoses"
+        tools:layout="@layout/fragment_diagnoses">
+
+        <action
+            android:id="@+id/action_nav_diagnoses_to_nav_create_diagnoses"
+            app:destination="@id/nav_create_diagnoses" />
+        <action
+            android:id="@+id/action_nav_diagnoses_to_nav_show_diagnoses"
+            app:destination="@id/nav_show_diagnoses" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_create_diagnoses"
+        android:name="com.cita.myapplication.ui.diagnoses.CreateDiagnosesFragment"
+        android:label="@string/menu_create_diagnoses"
+        tools:layout="@layout/fragment_create_diagnoses">
+        <argument
+            android:name="userId"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_nav_create_diagnoses_to_nav_result_diagnoses"
+            app:destination="@id/nav_result_diagnoses" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_result_diagnoses"
+        android:name="com.cita.myapplication.ui.diagnoses.ResultDiagnosesFragment"
+        android:label="@string/menu_result_diagnoses"
+        tools:layout="@layout/fragment_result_diagnoses">
+        <argument
+            android:name="diagnosesId"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_show_diagnoses"
+        android:name="com.cita.myapplication.ui.diagnoses.ShowDiagnosesFragment"
+        android:label="@string/menu_show_diagnoses"
+        tools:layout="@layout/fragment_show_diagnoses">
+        <argument
+            android:name="diagnosesId"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+
 
 </navigation>

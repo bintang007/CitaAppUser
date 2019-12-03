@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "801332907185",
+    "firebase_url": "https://cita-app-user.firebaseio.com",
+    "project_id": "cita-app-user",
+    "storage_bucket": "cita-app-user.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:801332907185:android:2d224669b279d1042f6690",
+        "android_client_info": {
+          "package_name": "com.cita.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "801332907185-lnnbnq95jrmu3mb48e6v9p13lqeem2nr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cita.myapplication",
+            "certificate_hash": "50d0626a4059b1422f6dc049026680bfd5b05b41"
+          }
+        },
+        {
+          "client_id": "801332907185-1bc5nidi0ip2aage2f8vt60k1fqo70ia.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZxRldHTbR4KSJttz0gecFeoCJUA7Iedo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "801332907185-1bc5nidi0ip2aage2f8vt60k1fqo70ia.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -20,6 +20,9 @@
             android:id="@+id/nav_nutrient"
             android:icon="@drawable/ic_menu_nutrient"
             android:title="@string/menu_nutrient" />
+        <item
+            android:id="@+id/nav_diagnoses"
+            android:title="@string/menu_diagnoses" />
     </group>
 
 

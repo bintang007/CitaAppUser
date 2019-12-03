@@ -20,6 +20,10 @@
     <string name="menu_create_child">Tambah Data Anak</string>
     <string name="menu_nutrient">Data Kandungan Gizi</string>
     <string name="menu_create_nutrient">Tambah Data Kandungan Gizi</string>
+    <string name="menu_diagnoses">Data Diagnosa Anak</string>
+    <string name="menu_create_diagnoses">Tambah Data Diagnosa Anak</string>
+    <string name="menu_result_diagnoses">Hasil Data Diagnosa Anak</string>
+    <string name="menu_show_diagnoses">Detail Data Diagnosa Anak</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -55,4 +59,19 @@
     <string name="txt_fat_with_colon">Lemak:&#160;</string>
     <string name="txt_protein_with_colon">Protein:&#160;</string>
     <string name="txt_carbohydrate_with_colon">Karbohidrat:&#160;</string>
+    <string name="txt_age_with_colon">Usia:&#160;</string>
+    <string name="txt_age">Usia</string>
+    <string name="txt_weight_with_colon">Berat Badan (Kg):&#160;</string>
+    <string name="txt_weight">Berat Badan (Kg)</string>
+    <string name="txt_height_with_colon">Tinggi Badan (cm):&#160;</string>
+    <string name="txt_height">Tinggi Badan (cm)</string>
+    <string name="txt_diagnoses_result_with_colon">Hasil Diagnosa:&#160;</string>
+    <string name="txt_diagnoses_result">Hasil Diagnosa</string>
+    <string name="txt_description_with_colon">Deskripsi:&#160;</string>
+    <string name="txt_description">Deskripsi</string>
+    <string name="txt_diagnoses_date_with_colon">Tanggal Diagnosa:&#160;</string>
+    <string name="txt_diagnoses_date">Tanggal Diagnosa</string>
+    <string name="txt_weight_child_with_asterisk">Berat Badan (Kg)*</string>
+    <string name="txt_height_child_with_asterisk">Tinggi Badan (cm)*</string>
+
 </resources>
