@@ -1,5 +1,6 @@
 package com.cita.myapplication.ui.profile;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -36,6 +37,8 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ProfileFragment extends Fragment {
+
+    private ProgressDialog progressDialog;
 
     private static final String TAG_JSON_OBJ = "json_obj_req";
     private static final String TAG_FULL_NAME = "full_name";
@@ -198,79 +201,85 @@ public class ProfileFragment extends Fragment {
                 alert.show();
             }
         });
-        mcvPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final AlertDialog.Builder alert = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
-                final EditText input = new EditText(getActivity());
-                FrameLayout container = new FrameLayout(getActivity());
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.
-                        LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.leftMargin = getResources().getDimensionPixelOffset(R.dimen.activity_horizontal_margin);
-                params.rightMargin = getResources().getDimensionPixelOffset(R.dimen.activity_horizontal_margin);
-                input.setSingleLine();
-                input.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                input.setLayoutParams(params);
-                container.addView(input);
-                alert.setTitle("Kata Sandi");
-                alert.setView(container);
-
-                alert.setPositiveButton("Ubah", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        final String password = input.getText().toString();
-                        StringRequest stringRequest1 = new StringRequest(Request.Method.POST,
-                                Server.URL + "user/update_profile_password.php",
-                                new Response.Listener<String>() {
-                                    @Override
-                                    public void onResponse(String response) {
-                                        Log.e(TAG, response);
-                                        try {
-                                            JSONObject jsonObject = new JSONObject(response);
-                                            Toast.makeText(getActivity(),
-                                                    jsonObject.getString(LoginActivity.TAG_MESSAGE),
-                                                    Toast.LENGTH_SHORT).show();
-                                            showProfile();
-
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                },
-                                new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                }) {
-                            @Override
-                            protected Map<String, String> getParams() {
-                                Map<String, String> params = new HashMap<>();
-                                params.put(TAG_PASSWORD, password);
-                                params.put(LoginActivity.TAG_USER_ID, String.valueOf(userId));
-                                return params;
-                            }
-                        };
-                        AppController.getInstance().addToRequestQueue(stringRequest1, TAG_JSON_OBJ, getActivity());
-                    }
-                });
-                alert.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                });
-                alert.show();
-            }
-        });
+//        mcvPassword.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                final AlertDialog.Builder alert = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
+//                final EditText input = new EditText(getActivity());
+//                FrameLayout container = new FrameLayout(getActivity());
+//                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.
+//                        LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//                params.leftMargin = getResources().getDimensionPixelOffset(R.dimen.activity_horizontal_margin);
+//                params.rightMargin = getResources().getDimensionPixelOffset(R.dimen.activity_horizontal_margin);
+//                input.setSingleLine();
+//                input.setTransformationMethod(PasswordTransformationMethod.getInstance());
+//                input.setLayoutParams(params);
+//                container.addView(input);
+//                alert.setTitle("Kata Sandi");
+//                alert.setView(container);
+//
+//                alert.setPositiveButton("Ubah", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        final String password = input.getText().toString();
+//                        StringRequest stringRequest1 = new StringRequest(Request.Method.POST,
+//                                Server.URL + "user/update_profile_password.php",
+//                                new Response.Listener<String>() {
+//                                    @Override
+//                                    public void onResponse(String response) {
+//                                        Log.e(TAG, response);
+//                                        try {
+//                                            JSONObject jsonObject = new JSONObject(response);
+//                                            Toast.makeText(getActivity(),
+//                                                    jsonObject.getString(LoginActivity.TAG_MESSAGE),
+//                                                    Toast.LENGTH_SHORT).show();
+//                                            showProfile();
+//
+//                                        } catch (JSONException e) {
+//                                            e.printStackTrace();
+//                                        }
+//                                    }
+//                                },
+//                                new Response.ErrorListener() {
+//                                    @Override
+//                                    public void onErrorResponse(VolleyError error) {
+//                                        Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
+//                                    }
+//                                }) {
+//                            @Override
+//                            protected Map<String, String> getParams() {
+//                                Map<String, String> params = new HashMap<>();
+//                                params.put(TAG_PASSWORD, password);
+//                                params.put(LoginActivity.TAG_USER_ID, String.valueOf(userId));
+//                                return params;
+//                            }
+//                        };
+//                        AppController.getInstance().addToRequestQueue(stringRequest1, TAG_JSON_OBJ, getActivity());
+//                    }
+//                });
+//                alert.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                    }
+//                });
+//                alert.show();
+//            }
+//        });
         return root;
     }
 
     private void showProfile() {
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Tunggu sebentar ...");
+        showProgressDialog();
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        hideProgressDialog();
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             tvFullName.setText(jsonObject.getString(TAG_FULL_NAME));
@@ -285,6 +294,7 @@ public class ProfileFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        hideProgressDialog();
                         Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }) {
@@ -306,6 +316,18 @@ public class ProfileFragment extends Fragment {
         } else {
             Toast.makeText(getActivity(), "Alamat email tidak valid", Toast.LENGTH_SHORT).show();
             return false;
+        }
+    }
+
+    private void showProgressDialog() {
+        if (!progressDialog.isShowing()) {
+            progressDialog.show();
+        }
+    }
+
+    private void hideProgressDialog() {
+        if (progressDialog.isShowing()) {
+            progressDialog.hide();
         }
     }
 }

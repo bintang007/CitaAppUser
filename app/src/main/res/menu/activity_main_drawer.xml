@@ -22,6 +22,7 @@
             android:title="@string/menu_nutrient" />
         <item
             android:id="@+id/nav_diagnoses"
+            android:icon="@drawable/ic_diagnoses_black_24dp"
             android:title="@string/menu_diagnoses" />
     </group>
 

@@ -1,5 +1,6 @@
 package com.cita.myapplication.ui.child;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -37,6 +38,8 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ChildFragment extends Fragment {
+
+    private ProgressDialog progressDialog;
 
     private SharedPreferences sharedPreferences;
     private final static String TAG_USER_ID = "user_id", TAG = ChildFragment.class.getSimpleName();
@@ -84,13 +87,18 @@ public class ChildFragment extends Fragment {
     }
 
     private void getAllChild() {
-        childArrayList = new ArrayList<>();
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Tunggu sebentar ...");
+        showProgressDialog();
 
+        childArrayList = new ArrayList<>();
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        hideProgressDialog();
                         Log.e(TAG, "Read response: " + response);
                         try {
                             JSONObject jsonObject = new JSONObject(response);
@@ -121,6 +129,7 @@ public class ChildFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        hideProgressDialog();
                         Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }) {
@@ -133,6 +142,16 @@ public class ChildFragment extends Fragment {
         };
         AppController.getInstance().addToRequestQueue(stringRequest, TAG_JSON_OBJ, getActivity());
     }
+    private void showProgressDialog() {
+        if (!progressDialog.isShowing()) {
+            progressDialog.show();
+        }
+    }
 
+    private void hideProgressDialog() {
+        if (progressDialog.isShowing()) {
+            progressDialog.hide();
+        }
+    }
 
 }

@@ -6,15 +6,22 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cita.myapplication.R;
 import com.cita.myapplication.model.Diagnoses;
+import com.cita.myapplication.ui.diagnoses.DiagnosesFragmentDirections;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class DiagnosesAdapter extends RecyclerView.Adapter<DiagnosesAdapter.DiagnosesViewHolder> {
     private ArrayList<Diagnoses> diagnosesArrayList;
+    private static final Locale LOCALE_ID = new Locale("in", "ID");
 
     public DiagnosesAdapter(ArrayList<Diagnoses> diagnosesArrayList) {
         this.diagnosesArrayList = diagnosesArrayList;
@@ -29,15 +36,31 @@ public class DiagnosesAdapter extends RecyclerView.Adapter<DiagnosesAdapter.Diag
     }
 
     @Override
-    public void onBindViewHolder(@NonNull DiagnosesViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull DiagnosesViewHolder holder, final int position) {
         holder.childName.setText(diagnosesArrayList.get(position).getChildName());
-        holder.gender.setText(diagnosesArrayList.get(position).getGender());
-        holder.childAge.setText(diagnosesArrayList.get(position).getChildAge());
-        holder.weightChild.setText(diagnosesArrayList.get(position).getWeightChild());
-        holder.heightChild.setText(diagnosesArrayList.get(position).getHeightCild());
         holder.diagnosesResult.setText(diagnosesArrayList.get(position).getDiagnosesResult());
-        holder.description.setText(diagnosesArrayList.get(position).getDescription());
-        holder.diagnosesDate.setText(diagnosesArrayList.get(position).getDiagnosesDate());
+        String diagnosesDateTimestamp = diagnosesArrayList.get(position).getDiagnosesDate();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", LOCALE_ID);
+
+        try {
+            Date dateTime = formatter.parse(diagnosesDateTimestamp);
+            formatter = new SimpleDateFormat("dd MMM ''yy HH:mm:ss", LOCALE_ID);
+            assert dateTime != null;
+            String diagnosesDate = formatter.format(dateTime);
+            holder.diagnosesDate.setText(diagnosesDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DiagnosesFragmentDirections.ActionNavDiagnosesToNavShowDiagnoses actionNavDiagnosesToNavShowDiagnoses =
+                        DiagnosesFragmentDirections.actionNavDiagnosesToNavShowDiagnoses();
+                actionNavDiagnosesToNavShowDiagnoses.setDiagnosesId(diagnosesArrayList.get(position).getDiagnosesId());
+                Navigation.findNavController(view).navigate(actionNavDiagnosesToNavShowDiagnoses);
+            }
+        });
     }
 
     @Override
@@ -46,18 +69,12 @@ public class DiagnosesAdapter extends RecyclerView.Adapter<DiagnosesAdapter.Diag
     }
 
     class DiagnosesViewHolder extends RecyclerView.ViewHolder {
-        private TextView childName, description, diagnosesResult, diagnosesDate, childAge, weightChild,
-                heightChild, gender;
+        private TextView childName, diagnosesResult, diagnosesDate;
 
         DiagnosesViewHolder(View itemView) {
             super(itemView);
             childName = itemView.findViewById(R.id.tv_child_name);
-            gender = itemView.findViewById(R.id.tv_gender);
-            childAge = itemView.findViewById(R.id.tv_child_age);
-            weightChild = itemView.findViewById(R.id.tv_weight_child);
-            heightChild = itemView.findViewById(R.id.tv_height_child);
             diagnosesResult = itemView.findViewById(R.id.tv_diagnoses_result);
-            description = itemView.findViewById(R.id.tv_description);
             diagnosesDate = itemView.findViewById(R.id.tv_diagnoses_date);
 
         }

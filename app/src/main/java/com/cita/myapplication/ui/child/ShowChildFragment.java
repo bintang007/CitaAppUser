@@ -2,6 +2,7 @@ package com.cita.myapplication.ui.child;
 
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -9,14 +10,12 @@ import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -31,11 +30,9 @@ import com.android.volley.toolbox.StringRequest;
 import com.cita.myapplication.LoginActivity;
 import com.cita.myapplication.R;
 import com.cita.myapplication.app.AppController;
-import com.cita.myapplication.ui.profile.ProfileFragment;
 import com.cita.myapplication.utils.Server;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,6 +49,8 @@ import java.util.Objects;
  * A simple {@link Fragment} subclass.
  */
 public class ShowChildFragment extends Fragment {
+
+    private ProgressDialog progressDialog;
     private TextView tvChildName, tvDateOfBirth, tvGender;
 
     private static final String TAG_JSON_OBJ = "json_obj_req";
@@ -89,7 +88,7 @@ public class ShowChildFragment extends Fragment {
         tvGender = root.findViewById(R.id.tv_gender);
 
 
-        showChild();
+        show();
 
         MaterialButton btnDelete = root.findViewById(R.id.btn_delete);
         MaterialButton btnBack = root.findViewById(R.id.btn_back);
@@ -104,7 +103,7 @@ public class ShowChildFragment extends Fragment {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                destroyChild();
+                destroy();
             }
         });
 
@@ -145,7 +144,7 @@ public class ShowChildFragment extends Fragment {
                                                 Toast.makeText(getActivity(),
                                                         jsonObject.getString(LoginActivity.TAG_MESSAGE),
                                                         Toast.LENGTH_SHORT).show();
-                                                showChild();
+                                                show();
 
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
@@ -217,7 +216,7 @@ public class ShowChildFragment extends Fragment {
                                             Toast.makeText(getActivity(),
                                                     jsonObject.getString(LoginActivity.TAG_MESSAGE),
                                                     Toast.LENGTH_SHORT).show();
-                                            showChild();
+                                            show();
 
                                         } catch (JSONException e) {
                                             e.printStackTrace();
@@ -291,7 +290,7 @@ public class ShowChildFragment extends Fragment {
                                             Toast.makeText(getActivity(),
                                                     jsonObject.getString(LoginActivity.TAG_MESSAGE),
                                                     Toast.LENGTH_SHORT).show();
-                                            showChild();
+                                            show();
 
                                         } catch (JSONException e) {
                                             e.printStackTrace();
@@ -327,11 +326,17 @@ public class ShowChildFragment extends Fragment {
         return root;
     }
 
-    private void showChild() {
+    private void show() {
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Tunggu sebentar ...");
+        showProgressDialog();
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        hideProgressDialog();
                         Log.e(TAG, "Show response: " + response);
                         try {
                             JSONObject jsonObject = new JSONObject(response);
@@ -348,6 +353,7 @@ public class ShowChildFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        hideProgressDialog();
                         Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }) {
@@ -362,18 +368,24 @@ public class ShowChildFragment extends Fragment {
 
     }
 
-    private void destroyChild() {
+    private void destroy() {
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
         builder.setMessage("Apakah anda yakin?");
         builder.setPositiveButton("Hapus", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                progressDialog = new ProgressDialog(getActivity());
+                progressDialog.setCancelable(false);
+                progressDialog.setMessage("Memproses ...");
+                showProgressDialog();
+
                 StringRequest stringRequest = new StringRequest(Request.Method.POST,
                         Server.URL + "user/destroy_child.php",
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                Log.e(TAG, "Destroy response: " + response);
+                                hideProgressDialog();
+                                Log.e(TAG, "Response: " + response);
                                 try {
                                     JSONObject jsonObject = new JSONObject(response);
                                     Toast.makeText(getActivity(), jsonObject.getString(TAG_MESSAGE), Toast.LENGTH_SHORT).show();
@@ -387,6 +399,7 @@ public class ShowChildFragment extends Fragment {
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
+                                hideProgressDialog();
                                 Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }) {
@@ -400,14 +413,24 @@ public class ShowChildFragment extends Fragment {
                 AppController.getInstance().addToRequestQueue(stringRequest, TAG_JSON_OBJ, getActivity());
             }
         });
-        builder.setNegativeButton("batal", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
             }
         });
         builder.show();
+    }
 
+    private void showProgressDialog() {
+        if (!progressDialog.isShowing()) {
+            progressDialog.show();
+        }
+    }
 
+    private void hideProgressDialog() {
+        if (progressDialog.isShowing()) {
+            progressDialog.hide();
+        }
     }
 }

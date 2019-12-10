@@ -1,5 +1,6 @@
 package com.cita.myapplication.ui.nutrient;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -40,6 +41,7 @@ import java.util.Objects;
 
 public class NutrientFragment extends Fragment {
 
+    private ProgressDialog progressDialog;
     private SharedPreferences sharedPreferences;
     private final static String TAG = NutrientFragment.class.getSimpleName();
     private static final String URL = Server.URL + "user/read_nutrient.php", TAG_SUCCESS = "success",
@@ -70,13 +72,17 @@ public class NutrientFragment extends Fragment {
     }
 
     private void getAllNutrient() {
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Tunggu sebentar ...");
+        showProgressDialog();
+
         nutrientArrayList = new ArrayList<>();
-
-
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        hideProgressDialog();
                         Log.e(TAG, "Read response: " + response);
                         try {
                             JSONObject jsonObject = new JSONObject(response);
@@ -111,17 +117,23 @@ public class NutrientFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        hideProgressDialog();
                         Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                return params;
-            }
-        };
+                });
         AppController.getInstance().addToRequestQueue(stringRequest, TAG_JSON_OBJ, getActivity());
     }
 
+    private void showProgressDialog() {
+        if (!progressDialog.isShowing()) {
+            progressDialog.show();
+        }
+    }
+
+    private void hideProgressDialog() {
+        if (progressDialog.isShowing()) {
+            progressDialog.hide();
+        }
+    }
 
 }

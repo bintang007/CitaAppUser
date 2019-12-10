@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -25,7 +26,6 @@ import com.cita.myapplication.R;
 import com.cita.myapplication.app.AppController;
 import com.cita.myapplication.model.Child;
 import com.cita.myapplication.utils.Server;
-import com.google.android.gms.dynamic.IFragmentWrapper;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -34,35 +34,36 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
 public class CreateDiagnosesFragment extends Fragment {
     private ProgressDialog progressDialog;
 
-    private TextInputLayout tilChildName, tilGender, tilChildAge, tilWeightChild, tilHeightChild,
-            tilDiagnoseResult, tilDescription, tilDiagnosesDate;
+    private TextInputLayout tilChildName, tilWeightChild, tilHeightChild;
 
-    private TextInputEditText tietChildName, tietGender, tietChildAge, tietWeightChild, tietHeightChild,
-            tietDiagnoseResult, tietDescription, tietDiagnosesDate;
+    private TextInputEditText tietWeightChild, tietHeightChild;
 
     private AutoCompleteTextView dropdownChildName;
 
-    private static final String URL = Server.URL + "user/store_diagnoses.php", TAG_CHILD_ID = "child_id",
-            TAG = CreateDiagnosesFragment.class.getSimpleName(), TAG_USER_ID = "user_id",
-            TAG_JSON_OBJ = "json_obj_req", TAG_MESSAGE = "message", TAG_SUCCESS = "success",
-            TAG_DIAGNOSES_ID = "diagnoses_id", TAG_CHILD_NAME = "child_name", TAG_CHILD_AGE = "child_age",
-            TAG_GENDER = "gender", TAG_WEIGHT_CHILD = "weight_child", TAG_HEIGHT_CHILD = "height_child",
-            TAG_DIAGNOSES_RESULT = "diagnoses_result", TAG_DESCRIPTION = "description",
-            TAG_DIAGNOSES_DATE = "diagnoses_date";
+    private ArrayList<Child> children;
+
+    private static final String URL = Server.URL + "user/store_diagnoses.php";
+    private static final String TAG_USER_ID = "user_id";
+    private static final String TAG_CHILD_ID = "child_id";
+    private static final String TAG_CHILD_NAME = "child_name";
+    private static final String TAG = CreateDiagnosesFragment.class.getSimpleName();
+    private static final String TAG_JSON_OBJ = "json_obj_req";
+    private static final String TAG_MESSAGE = "message";
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_DIAGNOSES_ID = "diagnoses_id";
+    private static final String TAG_WEIGHT_CHILD = "weight_child";
+    private static final String TAG_HEIGHT_CHILD = "height_child";
 
     private static int userId;
+    private static int childId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,29 +77,11 @@ public class CreateDiagnosesFragment extends Fragment {
         tilChildName = root.findViewById(R.id.til_child_name);
         tilWeightChild = root.findViewById(R.id.til_weight_child);
         tilHeightChild = root.findViewById(R.id.til_height_child);
-
         dropdownChildName = root.findViewById(R.id.dropdown_child_name);
         tietWeightChild = root.findViewById(R.id.tiet_weight_child);
         tietHeightChild = root.findViewById(R.id.tiet_height_child);
 
-        ArrayList<Child> children = loadChildren();
-        Log.e(TAG, "s");
-        String[] listChildName = new String[children.size()];
-        final int[] listChildId = new int[children.size()];
-        for (int i = 0; i < children.size(); i++) {
-
-            listChildId[i] = children.get(i).getChildId();
-            listChildName[i] = children.get(i).getChildName();
-        }
-
-
-        final ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(
-                        Objects.requireNonNull(getContext()),
-                        R.layout.dropdown_menu_popup_child_name,
-                        listChildName);
-
-        dropdownChildName.setAdapter(adapter);
+        initDropdownChildName();
 
         MaterialButton btnCancel = root.findViewById(R.id.btn_cancel);
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -132,13 +115,14 @@ public class CreateDiagnosesFragment extends Fragment {
                 textChangedListener(tietWeightChild, tilWeightChild);
                 textChangedListener(tietHeightChild, tilHeightChild);
 
+                String weightChild = tietWeightChild.getText().toString();
+                String heightChild = tietHeightChild.getText().toString();
 
-                int childId = listChildId[dropdownChildName.getListSelection()];
-                double weightChild = Double.parseDouble(tietWeightChild.getText().toString());
-                double heightChild = Double.parseDouble(tietHeightChild.getText().toString());
 
-                if (weightChild > 0 && heightChild > 0) {
-                    store(view, childId, weightChild, heightChild);
+                if (weightChild.trim().length() > 0 && heightChild.trim().length() > 0 && childId > 0) {
+                    double weightChildDouble = Double.parseDouble(tietWeightChild.getText().toString());
+                    double heightChildDouble = Double.parseDouble(tietHeightChild.getText().toString());
+                    store(view, childId, weightChildDouble, heightChildDouble);
 
                 }
 
@@ -158,12 +142,10 @@ public class CreateDiagnosesFragment extends Fragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e(TAG, "Store Response: " + response);
                         hideProgressDialog();
-
+                        Log.e(TAG, "Response: " + response);
                         try {
                             JSONObject jsonObject = new JSONObject(response);
-
                             int success = jsonObject.getInt(TAG_SUCCESS);
                             if (success == 1) {
                                 Toast.makeText(getActivity(),
@@ -204,13 +186,20 @@ public class CreateDiagnosesFragment extends Fragment {
         AppController.getInstance().addToRequestQueue(stringRequest, TAG_JSON_OBJ, getActivity());
     }
 
-    private ArrayList<Child> loadChildren() {
-        final ArrayList<Child> children = new ArrayList<>();
+    //
+    private void initDropdownChildName() {
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Tunggu sebentar ...");
+        showProgressDialog();
+
+        children = new ArrayList<>();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.URL + "user/child_name.php",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e(TAG, "Child Response: " + response);
+                        hideProgressDialog();
+                        Log.e(TAG, "Response: " + response);
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             JSONArray jsonArrayChildId = jsonObject.getJSONArray(TAG_CHILD_ID);
@@ -221,8 +210,30 @@ public class CreateDiagnosesFragment extends Fragment {
                                 child.setChildId(jsonArrayChildId.getInt(i));
                                 child.setChildName(jsonArrayChildName.getString(i));
                                 children.add(child);
-
                             }
+
+                            String[] listChildName = new String[children.size()];
+                            final int[] listChildId = new int[children.size()];
+                            for (int i = 0; i < children.size(); i++) {
+                                listChildId[i] = children.get(i).getChildId();
+                                listChildName[i] = children.get(i).getChildName();
+                            }
+
+                            ArrayAdapter<String> adapter =
+                                    new ArrayAdapter<>(
+                                            Objects.requireNonNull(getContext()),
+                                            R.layout.dropdown_menu_popup_child_name,
+                                            listChildName);
+
+                            dropdownChildName.setAdapter(adapter);
+                            dropdownChildName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                    childId = listChildId[i];
+                                }
+                            });
+
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -231,7 +242,8 @@ public class CreateDiagnosesFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        hideProgressDialog();
+                        Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }) {
             @Override
@@ -242,7 +254,6 @@ public class CreateDiagnosesFragment extends Fragment {
             }
         };
         AppController.getInstance().addToRequestQueue(stringRequest, TAG_JSON_OBJ, getActivity());
-        return children;
     }
 
     private void textChangedListener(TextInputEditText textInputEditText, final TextInputLayout textInputLayout) {
@@ -292,4 +303,5 @@ public class CreateDiagnosesFragment extends Fragment {
             progressDialog.dismiss();
         }
     }
+
 }

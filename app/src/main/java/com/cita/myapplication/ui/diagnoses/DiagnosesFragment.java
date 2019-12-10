@@ -1,5 +1,6 @@
 package com.cita.myapplication.ui.diagnoses;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -38,6 +39,8 @@ import java.util.Objects;
 
 public class DiagnosesFragment extends Fragment {
 
+    private ProgressDialog progressDialog;
+
     private static final String URL = Server.URL + "user/diagnoses.php", TAG = DiagnosesFragment.class.getSimpleName(),
             TAG_USER_ID = "user_id", TAG_JSON_OBJ = "json_obj_req", TAG_MESSAGE = "message",
             TAG_SUCCESS = "success", TAG_DIAGNOSES_ID = "diagnoses_id", TAG_CHILD_NAME = "child_name",
@@ -48,7 +51,7 @@ public class DiagnosesFragment extends Fragment {
     private int userId;
     private TextView tvEmptyChild;
     private DiagnosesAdapter diagnosesAdapter;
-
+    private FloatingActionButton fabCreateChild;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
@@ -69,7 +72,7 @@ public class DiagnosesFragment extends Fragment {
         rvDiagnoses.setAdapter(diagnosesAdapter);
 
 
-        FloatingActionButton fabCreateChild = root.findViewById(R.id.fab_create_diagnoses);
+        fabCreateChild = root.findViewById(R.id.fab_create_diagnoses);
         fabCreateChild.setSupportBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary));
         fabCreateChild.setSupportImageTintList(getResources().getColorStateList(R.color.colorWhite));
         fabCreateChild.setOnClickListener(new View.OnClickListener() {
@@ -85,44 +88,46 @@ public class DiagnosesFragment extends Fragment {
     }
 
     private void getAllDiagnoses() {
-        diagnosesArrayList = new ArrayList<>();
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Tunggu sebentar ...");
+        showProgressDialog();
 
+        diagnosesArrayList = new ArrayList<>();
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e(TAG, "Index response: " + response);
+                        hideProgressDialog();
+                        Log.e(TAG, "Response: " + response);
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             int success = jsonObject.getInt(TAG_SUCCESS);
                             if (success == 1) {
                                 JSONArray jsonArrayDiagnosesId = jsonObject.getJSONArray(TAG_DIAGNOSES_ID);
                                 JSONArray jsonArrayChildName = jsonObject.getJSONArray(TAG_CHILD_NAME);
-                                JSONArray jsonArrayGender = jsonObject.getJSONArray(TAG_GENDER);
-                                JSONArray jsonArrayChildAge = jsonObject.getJSONArray(TAG_CHILD_AGE);
-                                JSONArray jsonArrayWeightChild = jsonObject.getJSONArray(TAG_WEIGHT_CHILD);
-                                JSONArray jsonArrayHeightChild = jsonObject.getJSONArray(TAG_HEIGHT_CHILD);
                                 JSONArray jsonArrayDiagnosesResult = jsonObject.getJSONArray(TAG_DIAGNOSES_RESULT);
-                                JSONArray jsonArrayDescription = jsonObject.getJSONArray(TAG_DESCRIPTION);
                                 JSONArray jsonArrayDiagnosesDate = jsonObject.getJSONArray(TAG_DIAGNOSES_DATE);
                                 for (int i = 0; i < jsonArrayChildName.length(); i++) {
                                     Diagnoses diagnoses = new Diagnoses();
                                     diagnoses.setDiagnosesId(jsonArrayDiagnosesId.getInt(i));
                                     diagnoses.setChildName(jsonArrayChildName.getString(i));
-                                    diagnoses.setGender(jsonArrayGender.getString(i));
-                                    diagnoses.setChildAge(jsonArrayChildAge.getInt(i));
-                                    diagnoses.setWeightChild(jsonArrayWeightChild.getInt(i));
-                                    diagnoses.setHeightCild(jsonArrayHeightChild.getInt(i));
                                     diagnoses.setDiagnosesResult(jsonArrayDiagnosesResult.getString(i));
-                                    diagnoses.setDescription(jsonArrayDescription.getString(i));
-                                    diagnoses.setDiagnosesDate(jsonArrayDiagnosesDate.getInt(i));
-
+                                    diagnoses.setDiagnosesDate(jsonArrayDiagnosesDate.getString(i));
                                     diagnosesArrayList.add(diagnoses);
                                     diagnosesAdapter.setItems(diagnosesArrayList);
                                 }
+                            } else if (success == 0){
+                                tvEmptyChild.setText(jsonObject.getString(TAG_MESSAGE));
                             } else {
                                 tvEmptyChild.setText(jsonObject.getString(TAG_MESSAGE));
+                                fabCreateChild.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Toast.makeText(getActivity(), "Anda belum memiliki data anak", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
 
                         } catch (JSONException e) {
@@ -144,5 +149,17 @@ public class DiagnosesFragment extends Fragment {
             }
         };
         AppController.getInstance().addToRequestQueue(stringRequest, TAG_JSON_OBJ, getActivity());
+    }
+
+    private void showProgressDialog() {
+        if (!progressDialog.isShowing()) {
+            progressDialog.show();
+        }
+    }
+
+    private void hideProgressDialog() {
+        if (progressDialog.isShowing()) {
+            progressDialog.hide();
+        }
     }
 }

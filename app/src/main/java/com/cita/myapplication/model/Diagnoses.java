@@ -5,11 +5,11 @@ import android.os.Parcelable;
 
 public class Diagnoses implements Parcelable {
     private int diagnosesId;
-    private int diagnosesDate;
     private int childAge;
     private int weightChild;
     private int heightCild;
     private String description;
+    private String diagnosesDate;
     private String diagnosesResult;
     private String childName;
     private String gender;
@@ -31,11 +31,11 @@ public class Diagnoses implements Parcelable {
         this.gender = gender;
     }
 
-    public int getDiagnosesDate() {
+    public String getDiagnosesDate() {
         return diagnosesDate;
     }
 
-    public void setDiagnosesDate(int diagnosesDate) {
+    public void setDiagnosesDate(String diagnosesDate) {
         this.diagnosesDate = diagnosesDate;
     }
 
@@ -99,10 +99,10 @@ public class Diagnoses implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.diagnosesId);
-        dest.writeInt(this.diagnosesDate);
         dest.writeInt(this.childAge);
         dest.writeInt(this.weightChild);
         dest.writeInt(this.heightCild);
+        dest.writeString(this.diagnosesDate);
         dest.writeString(this.description);
         dest.writeString(this.diagnosesResult);
         dest.writeString(this.childName);
@@ -111,7 +111,7 @@ public class Diagnoses implements Parcelable {
 
     protected Diagnoses(Parcel in) {
         this.diagnosesId = in.readInt();
-        this.diagnosesDate = in.readInt();
+        this.diagnosesDate = in.readString();
         this.childAge = in.readInt();
         this.weightChild = in.readInt();
         this.heightCild = in.readInt();

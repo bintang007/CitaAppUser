@@ -1,11 +1,13 @@
 package com.cita.myapplication.ui.diagnoses;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -15,20 +17,25 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.cita.myapplication.R;
 import com.cita.myapplication.app.AppController;
-import com.cita.myapplication.model.Child;
 import com.cita.myapplication.utils.Server;
 import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
 public class ResultDiagnosesFragment extends Fragment {
+
+    private static final Locale LOCALE_ID = new Locale("in","ID");
+
+    private ProgressDialog progressDialog;
     private TextView tvChilcName, tvGender, tvChildAge, tvWeightChild, tvHeightChild, tvDiagnosesResult,
             tvDescription, tvDiagnosesDate;
 
@@ -74,20 +81,39 @@ public class ResultDiagnosesFragment extends Fragment {
     }
 
     private void diagnosesResult() {
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Tunggu sebentar ...");
+        showProgressDialog();
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        hideProgressDialog();
+                        Log.e(TAG, "Response: " + response);
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             tvChilcName.setText(jsonObject.getString(TAG_CHILD_NAME));
                             tvGender.setText(jsonObject.getString(TAG_GENDER));
                             tvChildAge.setText(jsonObject.getString(TAG_CHILD_AGE));
-                            tvWeightChild.setText(jsonObject.getInt(TAG_WEIGHT_CHILD));
+                            tvWeightChild.setText(jsonObject.getString(TAG_WEIGHT_CHILD));
                             tvHeightChild.setText(jsonObject.getString(TAG_HEIGHT_CHILD));
                             tvDiagnosesResult.setText(jsonObject.getString(TAG_DIAGNOSES_RESULT));
                             tvDescription.setText(jsonObject.getString(TAG_DESCRIPTION));
-                            tvDiagnosesDate.setText(jsonObject.getString(TAG_DIAGNOSES_DATE));
+                            String diagnosesDateTimestamp = jsonObject.getString(TAG_DIAGNOSES_DATE);
+                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", LOCALE_ID);
+
+                            try {
+                                Date dateTime = formatter.parse(diagnosesDateTimestamp);
+                                formatter = new SimpleDateFormat("dd MMMM yyyy HH:mm:ss", LOCALE_ID);
+                                assert dateTime != null;
+                                String diagnosesDate = formatter.format(dateTime);
+                                tvDiagnosesDate.setText(diagnosesDate);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -96,7 +122,8 @@ public class ResultDiagnosesFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        hideProgressDialog();
+                        Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }) {
             @Override
@@ -107,6 +134,17 @@ public class ResultDiagnosesFragment extends Fragment {
             }
         };
         AppController.getInstance().addToRequestQueue(stringRequest, TAG_JSON_OBJ, getActivity());
+    }
+    private void showProgressDialog() {
+        if (!progressDialog.isShowing()) {
+            progressDialog.show();
+        }
+    }
+
+    private void hideProgressDialog() {
+        if (progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 }
 
