@@ -41,17 +41,22 @@ public class DiagnosesFragment extends Fragment {
 
     private ProgressDialog progressDialog;
 
-    private static final String URL = Server.URL + "user/diagnoses.php", TAG = DiagnosesFragment.class.getSimpleName(),
-            TAG_USER_ID = "user_id", TAG_JSON_OBJ = "json_obj_req", TAG_MESSAGE = "message",
-            TAG_SUCCESS = "success", TAG_DIAGNOSES_ID = "diagnoses_id", TAG_CHILD_NAME = "child_name",
-            TAG_CHILD_AGE = "child_age", TAG_GENDER = "gender", TAG_WEIGHT_CHILD = "weight_child",
-            TAG_HEIGHT_CHILD = "height_child", TAG_DIAGNOSES_RESULT = "diagnoses_result",
-            TAG_DESCRIPTION = "description", TAG_DIAGNOSES_DATE = "diagnoses_date";
+    private static final String URL = Server.URL + "user/diagnoses.php";
+    private static final String TAG = DiagnosesFragment.class.getSimpleName();
+    private static final String TAG_USER_ID = "user_id";
+    private static final String TAG_JSON_OBJ = "json_obj_req";
+    private static final String TAG_MESSAGE = "message";
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_DIAGNOSES_ID = "diagnoses_id";
+    private static final String TAG_CHILD_NAME = "child_name";
+    private static final String TAG_DIAGNOSES_RESULT = "diagnoses_result";
+    private static final String TAG_DIAGNOSES_DATE = "diagnoses_date";
     private ArrayList<Diagnoses> diagnosesArrayList;
     private int userId;
     private TextView tvEmptyChild;
     private DiagnosesAdapter diagnosesAdapter;
     private FloatingActionButton fabCreateChild;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
@@ -109,16 +114,49 @@ public class DiagnosesFragment extends Fragment {
                                 JSONArray jsonArrayChildName = jsonObject.getJSONArray(TAG_CHILD_NAME);
                                 JSONArray jsonArrayDiagnosesResult = jsonObject.getJSONArray(TAG_DIAGNOSES_RESULT);
                                 JSONArray jsonArrayDiagnosesDate = jsonObject.getJSONArray(TAG_DIAGNOSES_DATE);
-                                for (int i = 0; i < jsonArrayChildName.length(); i++) {
+                                int length = jsonArrayDiagnosesId.length();
+                                int[] diagnosesId = new int[length];
+                                String[] childName = new String[length];
+                                String[] diagnosesResult = new String[length];
+                                String[] diagnosesDate = new String[length];
+                                for (int i = 0; i < length; i++) {
+                                    diagnosesId[i] = jsonArrayDiagnosesId.getInt(i);
+                                    childName[i] = jsonArrayChildName.getString(i);
+                                    diagnosesResult[i] = jsonArrayDiagnosesResult.getString(i);
+                                    diagnosesDate[i] = jsonArrayDiagnosesDate.getString(i);
+                                }
+                                for (int i = 0; i < length; i++) {
+                                    for (int j = 1; j < length - 1; j++) {
+                                        int a = diagnosesId[j - 1];
+                                        int b = diagnosesId[j];
+                                        if (a > b) {
+                                            String tempChildName = childName[j - 1];
+                                            String tempDiagnosesResult = diagnosesResult[j - 1];
+                                            String tempDiagnosesDate = diagnosesDate[j - 1];
+
+                                            diagnosesId[j - 1] = b;
+                                            childName[j - 1] = childName[j];
+                                            diagnosesResult[j - 1] = diagnosesResult[j];
+                                            diagnosesDate[j - 1] = diagnosesDate[j];
+
+                                            diagnosesId[j] = a;
+                                            childName[j] = tempChildName;
+                                            diagnosesResult[j] = tempDiagnosesResult;
+                                            diagnosesDate[j] = tempDiagnosesDate;
+
+                                        }
+                                    }
+                                }
+                                for (int i = 0; i < length; i++) {
                                     Diagnoses diagnoses = new Diagnoses();
-                                    diagnoses.setDiagnosesId(jsonArrayDiagnosesId.getInt(i));
-                                    diagnoses.setChildName(jsonArrayChildName.getString(i));
-                                    diagnoses.setDiagnosesResult(jsonArrayDiagnosesResult.getString(i));
-                                    diagnoses.setDiagnosesDate(jsonArrayDiagnosesDate.getString(i));
+                                    diagnoses.setDiagnosesId(diagnosesId[i]);
+                                    diagnoses.setChildName(childName[i]);
+                                    diagnoses.setDiagnosesResult(diagnosesResult[i]);
+                                    diagnoses.setDiagnosesDate(diagnosesDate[i]);
                                     diagnosesArrayList.add(diagnoses);
                                     diagnosesAdapter.setItems(diagnosesArrayList);
                                 }
-                            } else if (success == 0){
+                            } else if (success == 0) {
                                 tvEmptyChild.setText(jsonObject.getString(TAG_MESSAGE));
                             } else {
                                 tvEmptyChild.setText(jsonObject.getString(TAG_MESSAGE));
