@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,6 +116,7 @@ public class CreateChildFragment extends Fragment {
                                 myCalendar.get(Calendar.DAY_OF_MONTH));
                 datePickerDialog.getDatePicker().getTouchables().get(0).performClick();
                 datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - (DateUtils.YEAR_IN_MILLIS * 5));
                 datePickerDialog.show();
             }
         });

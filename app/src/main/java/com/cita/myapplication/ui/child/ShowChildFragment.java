@@ -10,6 +10,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -244,6 +245,7 @@ public class ShowChildFragment extends Fragment {
                         myCalendar.get(Calendar.DAY_OF_MONTH));
                 DatePicker datePicker = datePickerDialog.getDatePicker();
                 datePicker.setMaxDate(System.currentTimeMillis());
+                datePicker.setMinDate(System.currentTimeMillis() - (DateUtils.YEAR_IN_MILLIS * 5));
                 datePickerDialog.show();
 
 
